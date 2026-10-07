@@ -14,7 +14,7 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: readonly NavItem[] = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/research/new", label: "New Research", icon: Search },
   { href: "/research", label: "Research History", icon: History },
   { href: "/reports", label: "Reports", icon: FileText },
@@ -22,8 +22,8 @@ export const NAV_ITEMS: readonly NavItem[] = [
 ] as const;
 
 export function isNavItemActive(pathname: string, href: string): boolean {
-  if (href === "/") {
-    return pathname === "/";
+  if (href === "/dashboard") {
+    return pathname === "/dashboard";
   }
 
   if (href === "/research/new") {
