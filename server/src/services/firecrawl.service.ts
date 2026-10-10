@@ -7,6 +7,7 @@ export const firecrawlPageSchema = z.object({
       markdown: z.string().optional(),
       title: z.string().optional(),
       description: z.string().optional(),
+      links: z.array(z.string()).optional(),
       metadata: z.record(z.string(), z.unknown()).optional(),
     })
     .optional(),
@@ -19,12 +20,17 @@ export type FirecrawlPage = {
   title?: string;
   description?: string;
   content: string;
+  links?: string[];
   metadata: Record<string, unknown> & { sourceUrl: string };
 };
 
 export type FirecrawlServiceOptions = {
   apiKey: string;
   baseUrl?: string;
+};
+
+export type FirecrawlScrapeOptions = {
+  formats?: Array<"markdown" | "links">;
 };
 
 export class FirecrawlService {
@@ -40,7 +46,10 @@ export class FirecrawlService {
     this.baseUrl = options.baseUrl ?? "https://api.firecrawl.dev";
   }
 
-  async crawlPage(url: string): Promise<FirecrawlPage> {
+  async crawlPage(
+    url: string,
+    options: FirecrawlScrapeOptions = {}
+  ): Promise<FirecrawlPage> {
     const validatedUrl = this.validateUrl(url);
     const response = await fetch(`${this.baseUrl.replace(/\/$/, "")}/v1/scrape`, {
       method: "POST",
@@ -48,7 +57,10 @@ export class FirecrawlService {
         Authorization: `Bearer ${this.apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ url: validatedUrl }),
+      body: JSON.stringify({
+        url: validatedUrl,
+        formats: options.formats ?? ["markdown"],
+      }),
     });
 
     let payload: unknown;
@@ -77,6 +89,7 @@ export class FirecrawlService {
       title: data?.title?.trim() || undefined,
       description: data?.description?.trim() || undefined,
       content: data?.markdown?.trim() || "",
+      ...(data?.links ? { links: data.links } : {}),
       metadata: {
         ...(data?.metadata ?? {}),
         sourceUrl: validatedUrl,

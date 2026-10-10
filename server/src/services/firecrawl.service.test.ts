@@ -38,6 +38,7 @@ test("FirecrawlService crawls a valid URL and normalizes metadata", async () => 
       markdown: "# Example\n\nWebsite content.",
       title: "Example Company",
       description: "Example description",
+      links: ["https://example.com/pricing"],
       metadata: {
         language: "en",
         statusCode: 200,
@@ -59,6 +60,7 @@ test("FirecrawlService crawls a valid URL and normalizes metadata", async () => 
       title: "Example Company",
       description: "Example description",
       content: "# Example\n\nWebsite content.",
+      links: ["https://example.com/pricing"],
       metadata: {
         language: "en",
         statusCode: 200,
